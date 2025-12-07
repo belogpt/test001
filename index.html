@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Подписание файлов ЭЦП (CryptoPro)</title>
   <link rel="stylesheet" href="styles.css" />
+  <script src="./cadesplugin_api.js"></script>
 </head>
 <body>
   <script>
@@ -42,8 +43,8 @@
           <h1>Подписание файлов с помощью плагина CryptoPro</h1>
           <p class="muted">
             Легковесное одностраничное приложение для работы полностью локально в браузере.
-            Требуется установленный плагин CryptoPro (или совместимый) и файл <code>vendor/cadesplugin_api.js</code>,
-            поставляемый вместе с плагином.
+            Требуется установленный плагин CryptoPro (или совместимый) и файл <code>cadesplugin_api.js</code>,
+            расположенный рядом с этой страницей.
           </p>
         </div>
         <div id="plugin-status" class="status status--neutral">Проверка плагина...</div>
@@ -118,7 +119,7 @@
         </div>
         <ol class="instructions">
           <li>Установите плагин CryptoPro Browser Plug-in и убедитесь, что в системе есть <code>cadesplugin_api.js</code>.</li>
-          <li>Скопируйте файл <code>cadesplugin_api.js</code> в каталог <code>vendor/</code> рядом с этим приложением.</li>
+          <li>Скопируйте файл <code>cadesplugin_api.js</code> в корень рядом с <code>index.html</code> (этот файл уже добавлен).</li>
           <li>Запустите приложение через локальный сервер: <code>npm start</code> и откройте <code>http://localhost:8080</code>.</li>
           <li>Нажмите «Обновить», выберите сертификат и подпишите нужный файл.</li>
         </ol>
@@ -130,10 +131,6 @@
     <span>Поддерживаются плагины CryptoPro с объектной моделью CAdESCOM/CAPICOM.</span>
   </footer>
 
-  <script type="module">
-    if (!window.__disableApp) {
-      import('./js/app.js');
-    }
-  </script>
+  <script type="module" src="./js/app.js" defer></script>
 </body>
 </html>
