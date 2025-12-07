@@ -1,0 +1,11 @@
+{
+  "name": "crypto-pro-offline-signer",
+  "version": "1.0.0",
+  "description": "Локальное браузерное приложение для подписи файлов с помощью CryptoPro CAdES.",
+  "scripts": {
+    "start": "node server.js",
+    "serve": "node server.js"
+  },
+  "author": "",
+  "license": "MIT"
+}

@@ -16,29 +16,129 @@ function injectPluginScript() {
   });
 }
 
-export async function ensurePlugin() {
-  if (!window.cadesplugin) {
+function normalizeVersion(version) {
+  if (!version) {
+    return '';
+  }
+
+  if (typeof version === 'string') {
+    return version;
+  }
+
+  if (typeof version.toString === 'function') {
+    return version.toString();
+  }
+
+  const parts = ['Major', 'Minor', 'Build']
+    .map((key) => version[key])
+    .filter((value) => typeof value !== 'undefined');
+
+  return parts.join('.');
+}
+
+export async function checkCades() {
+  if (window.location.protocol === 'file:') {
+    return {
+      ok: false,
+      message: 'Запуск через file:// отключает доступ к плагину. Запустите приложение через http://localhost.',
+      details: [
+        { label: 'Протокол', value: 'file://' },
+        { label: 'Инициализация API', value: 'Не выполняется в file:// режиме' },
+      ],
+      hints: [
+        'Запустите "npm install" и "npm start" чтобы открыть приложение по http://localhost:8080.',
+        'В Chrome/Edge включите «Разрешить доступ к URL файлов» для расширения CryptoPro только в крайнем случае.',
+      ],
+    };
+  }
+
+  try {
     await injectPluginScript();
+  } catch (error) {
+    return {
+      ok: false,
+      message: error.message,
+      details: [
+        { label: 'Загрузка cadesplugin_api.js', value: 'Не удалось' },
+        { label: 'Ожидаемый путь', value: PLUGIN_SCRIPT_PATH },
+      ],
+      hints: ['Убедитесь, что оригинальный cadesplugin_api.js скопирован в каталог vendor/.'],
+    };
   }
 
   if (!window.cadesplugin) {
-    throw new Error('Плагин CryptoPro не найден. Добавьте cadesplugin_api.js в vendor/.');
+    return {
+      ok: false,
+      message: 'Объект cadesplugin не найден в окне браузера.',
+      details: [
+        { label: 'Инъекция API', value: 'Не обнаружен window.cadesplugin' },
+        { label: 'Путь к скрипту', value: PLUGIN_SCRIPT_PATH },
+      ],
+      hints: [
+        'Проверьте, что расширение CryptoPro установлено и включено.',
+        'Убедитесь, что cadesplugin_api.js загружается без ошибок в консоли.',
+      ],
+    };
   }
 
-  if (typeof window.cadesplugin.then === 'function') {
-    await window.cadesplugin;
+  let plugin = window.cadesplugin;
+  try {
+    if (typeof plugin.then === 'function') {
+      plugin = await plugin;
+    }
+  } catch (error) {
+    return {
+      ok: false,
+      message: `Плагин загружен, но не готов: ${error.message}`,
+      details: [
+        { label: 'Инициализация API', value: 'Ошибка готовности' },
+        { label: 'Подробнее', value: error.message },
+      ],
+      hints: ['Откройте страницу из доверенного контекста (http://localhost) и проверьте права доступа расширения.'],
+    };
   }
 
-  return window.cadesplugin;
+  try {
+    const about = await plugin.CreateObject('CAdESCOM.About');
+    const version = normalizeVersion(await about.PluginVersion);
+    return {
+      ok: true,
+      message: 'CryptoPro API доступен и готов к работе',
+      details: [
+        { label: 'Протокол', value: window.location.protocol },
+        { label: 'Версия плагина', value: version || 'н/д' },
+        { label: 'Origin', value: window.location.origin },
+      ],
+      plugin,
+    };
+  } catch (error) {
+    return {
+      ok: false,
+      message: 'Расширение установлено, но API недоступен для текущего origin.',
+      details: [
+        { label: 'CreateObject', value: error.message },
+        { label: 'Origin', value: window.location.origin },
+      ],
+      hints: [
+        'Убедитесь, что страница открыта с http://localhost, а не по file://.',
+        'Проверьте настройки расширения CryptoPro и наличие прав доступа к этому сайту.',
+      ],
+    };
+  }
+}
+
+export async function ensurePlugin() {
+  const result = await checkCades();
+
+  if (!result.ok) {
+    throw new Error(result.message);
+  }
+
+  return result.plugin || window.cadesplugin;
 }
 
 export async function detectPlugin() {
-  try {
-    await ensurePlugin();
-    return { ok: true, message: 'Плагин готов к работе' };
-  } catch (error) {
-    return { ok: false, message: error.message };
-  }
+  return checkCades();
 }
 
 export async function fetchCertificates() {

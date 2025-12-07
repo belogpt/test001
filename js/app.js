@@ -1,4 +1,4 @@
-import { detectPlugin, fetchCertificates, formatCertificateInfo, signFileWithCertificate } from './signing.js';
+import { checkCades, fetchCertificates, formatCertificateInfo, signFileWithCertificate } from './signing.js';
 
 const statusEl = document.getElementById('plugin-status');
 const certificateSelect = document.getElementById('certificate-select');
@@ -10,6 +10,7 @@ const fileInput = document.getElementById('file-input');
 const detachedToggle = document.getElementById('detached-toggle');
 const signatureOutput = document.getElementById('signature-output');
 const downloadButton = document.getElementById('download-signature');
+const statusDetails = document.getElementById('status-details');
 
 let certificates = [];
 
@@ -34,6 +35,42 @@ function setCertificateOptions(items) {
     option.textContent = `${cert.subject} (до ${cert.validTo.toLocaleDateString('ru-RU')})`;
     certificateSelect.appendChild(option);
   });
+}
+
+function renderStatusDetails(state) {
+  if (!statusDetails) {
+    return;
+  }
+
+  statusDetails.innerHTML = '';
+
+  const items = state?.details?.length
+    ? state.details
+    : [{ label: 'Состояние', value: state?.message || 'Нет данных' }];
+
+  items.forEach((item) => {
+    const row = document.createElement('div');
+    row.className = 'status-item';
+
+    const label = document.createElement('strong');
+    label.textContent = item.label;
+    const value = document.createElement('div');
+    value.textContent = item.value;
+
+    row.append(label, value);
+    statusDetails.appendChild(row);
+  });
+
+  if (state?.hints?.length) {
+    const hintsList = document.createElement('ul');
+    hintsList.className = 'instructions';
+    state.hints.forEach((hint) => {
+      const li = document.createElement('li');
+      li.textContent = hint;
+      hintsList.appendChild(li);
+    });
+    statusDetails.appendChild(hintsList);
+  }
 }
 
 function showCertificateInfo(thumbprint) {
@@ -117,13 +154,13 @@ function downloadSignature() {
 }
 
 async function init() {
-  const pluginState = await detectPlugin();
+  const pluginState = await checkCades();
   setStatus(pluginState.message, pluginState.ok ? 'ok' : 'error');
-  if (!pluginState.ok) {
-    return;
-  }
+  renderStatusDetails(pluginState);
 
-  await refreshCertificates();
+  if (pluginState.ok) {
+    await refreshCertificates();
+  }
 }
 
 certificateSelect.addEventListener('change', (event) => {
