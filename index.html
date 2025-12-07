@@ -7,6 +7,27 @@
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
+  <script>
+    if (window.location.protocol === 'file:') {
+      const advice = `
+        <section class="panel">
+          <div class="panel-header">
+            <h1>Запуск через file:// не поддерживается</h1>
+          </div>
+          <div class="card">
+            <p>Расширение CryptoPro не инжектирует <code>cadesplugin</code> на страницах, открытых по <code>file://</code>.</p>
+            <ol class="instructions">
+              <li>Установите зависимости и запустите локальный сервер: <code>npm install</code>, затем <code>npm start</code>.</li>
+              <li>Откройте <a href="http://localhost:8080" target="_blank" rel="noreferrer">http://localhost:8080</a> вместо локального файла.</li>
+              <li>Если всё же нужен file://, включите в настройках расширения Chrome/Edge пункт «Разрешить доступ к URL файлов».</li>
+            </ol>
+          </div>
+        </section>`;
+      document.body.innerHTML = advice;
+      window.__disableApp = true;
+    }
+  </script>
+
   <header class="page-header">
     <div class="logo">ЭЦП Подпись</div>
     <div class="header-actions">
@@ -26,6 +47,15 @@
           </p>
         </div>
         <div id="plugin-status" class="status status--neutral">Проверка плагина...</div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Статус ЭЦП</h2>
+        </div>
+        <div id="status-details" class="status-list">
+          <p class="muted">Выполняется проверка доступности CryptoPro API...</p>
+        </div>
       </div>
 
       <div class="grid">
@@ -89,7 +119,7 @@
         <ol class="instructions">
           <li>Установите плагин CryptoPro Browser Plug-in и убедитесь, что в системе есть <code>cadesplugin_api.js</code>.</li>
           <li>Скопируйте файл <code>cadesplugin_api.js</code> в каталог <code>vendor/</code> рядом с этим приложением.</li>
-          <li>Откройте файл <code>index.html</code> локально в браузере (Chrome/Edge/Firefox) с разрешённым плагином.</li>
+          <li>Запустите приложение через локальный сервер: <code>npm start</code> и откройте <code>http://localhost:8080</code>.</li>
           <li>Нажмите «Обновить», выберите сертификат и подпишите нужный файл.</li>
         </ol>
       </div>
@@ -100,6 +130,10 @@
     <span>Поддерживаются плагины CryptoPro с объектной моделью CAdESCOM/CAPICOM.</span>
   </footer>
 
-  <script type="module" src="js/app.js"></script>
+  <script type="module">
+    if (!window.__disableApp) {
+      import('./js/app.js');
+    }
+  </script>
 </body>
 </html>
