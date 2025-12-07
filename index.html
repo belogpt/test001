@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Подписание файлов ЭЦП (CryptoPro)</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="page-header">
+    <div class="logo">ЭЦП Подпись</div>
+    <div class="header-actions">
+      <span class="badge">Оффлайн</span>
+    </div>
+  </header>
+
+  <main>
+    <section class="panel">
+      <div class="panel-header">
+        <div>
+          <h1>Подписание файлов с помощью плагина CryptoPro</h1>
+          <p class="muted">
+            Легковесное одностраничное приложение для работы полностью локально в браузере.
+            Требуется установленный плагин CryptoPro (или совместимый) и файл <code>vendor/cadesplugin_api.js</code>,
+            поставляемый вместе с плагином.
+          </p>
+        </div>
+        <div id="plugin-status" class="status status--neutral">Проверка плагина...</div>
+      </div>
+
+      <div class="grid">
+        <div class="card">
+          <div class="card-header">
+            <h2>Сертификаты</h2>
+            <button id="refresh-certificates" class="secondary">Обновить</button>
+          </div>
+          <div class="field">
+            <label for="certificate-select">Выберите сертификат с закрытым ключом</label>
+            <select id="certificate-select">
+              <option value="">Список пуст</option>
+            </select>
+          </div>
+          <div class="field">
+            <label>Информация о сертификате</label>
+            <pre id="certificate-info" class="info-box">Нет данных</pre>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="card-header">
+            <h2>Файл и параметры</h2>
+          </div>
+          <div class="field">
+            <label for="file-input">Выберите файл для подписи</label>
+            <input type="file" id="file-input" />
+          </div>
+          <div class="field inline">
+            <label for="detached-toggle">
+              <input type="checkbox" id="detached-toggle" /> Создать отсоединённую подпись
+            </label>
+          </div>
+          <div class="hint">
+            Используется формат CAdES-BES. Отсоединённая подпись не содержит исходный файл.
+          </div>
+          <div class="actions">
+            <button id="sign-button" class="primary">Подписать</button>
+            <button id="reset-button" class="secondary">Сбросить</button>
+          </div>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Результат подписи</h2>
+          <div class="actions">
+            <button id="download-signature" class="secondary" disabled>Скачать .sig</button>
+          </div>
+        </div>
+        <div class="field">
+          <label for="signature-output">Подпись (Base64)</label>
+          <textarea id="signature-output" rows="6" readonly placeholder="Здесь появится подпись"></textarea>
+        </div>
+      </div>
+
+      <div class="card">
+        <div class="card-header">
+          <h2>Как использовать офлайн</h2>
+        </div>
+        <ol class="instructions">
+          <li>Установите плагин CryptoPro Browser Plug-in и убедитесь, что в системе есть <code>cadesplugin_api.js</code>.</li>
+          <li>Скопируйте файл <code>cadesplugin_api.js</code> в каталог <code>vendor/</code> рядом с этим приложением.</li>
+          <li>Откройте файл <code>index.html</code> локально в браузере (Chrome/Edge/Firefox) с разрешённым плагином.</li>
+          <li>Нажмите «Обновить», выберите сертификат и подпишите нужный файл.</li>
+        </ol>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer">
+    <span>Поддерживаются плагины CryptoPro с объектной моделью CAdESCOM/CAPICOM.</span>
+  </footer>
+
+  <script type="module" src="js/app.js"></script>
+</body>
+</html>

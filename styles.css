@@ -1,0 +1,244 @@
+:root {
+  --background: #f6f8fa;
+  --card: #ffffff;
+  --border: #e0e6ed;
+  --text: #1f2933;
+  --muted: #52606d;
+  --primary: #2563eb;
+  --primary-strong: #1d4ed8;
+  --secondary: #eef2f7;
+  --accent: #f1f5f9;
+  --success: #0ea37a;
+  --warning: #f59e0b;
+  --danger: #dc2626;
+  --radius: 12px;
+  --shadow: 0 6px 18px rgba(15, 23, 42, 0.08);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  color: var(--text);
+  background: radial-gradient(circle at 10% 20%, #f8fbff, #eef2f7 30%, #f6f8fa 50%);
+  min-height: 100vh;
+}
+
+main {
+  padding: 24px;
+  max-width: 1200px;
+  margin: 0 auto 48px;
+}
+
+.page-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  background: var(--card);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+.logo {
+  font-weight: 800;
+  font-size: 20px;
+  letter-spacing: 0.02em;
+}
+
+.badge {
+  background: linear-gradient(120deg, #22c55e, #14b8a6);
+  color: white;
+  padding: 6px 12px;
+  border-radius: 999px;
+  font-weight: 600;
+  font-size: 12px;
+}
+
+.panel {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: var(--shadow);
+}
+
+.panel-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  margin-bottom: 20px;
+}
+
+.panel h1 {
+  margin: 0 0 6px;
+}
+
+.muted {
+  color: var(--muted);
+  margin: 0;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  gap: 16px;
+}
+
+.card {
+  background: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 16px;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+
+.card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.card h2 {
+  margin: 0;
+}
+
+.field {
+  margin-bottom: 12px;
+}
+
+.field label {
+  display: block;
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.field.inline label {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-weight: 500;
+}
+
+select,
+input[type="file"],
+textarea,
+button {
+  font: inherit;
+}
+
+select,
+input[type="file"],
+textarea {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: #fff;
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+}
+
+textarea {
+  resize: vertical;
+  min-height: 120px;
+}
+
+button {
+  border: none;
+  border-radius: 10px;
+  cursor: pointer;
+  padding: 10px 16px;
+  transition: transform 0.05s ease, box-shadow 0.1s ease;
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+button.primary {
+  background: linear-gradient(120deg, var(--primary), var(--primary-strong));
+  color: white;
+  box-shadow: 0 10px 25px rgba(37, 99, 235, 0.25);
+}
+
+button.secondary {
+  background: var(--secondary);
+  color: var(--text);
+  border: 1px solid var(--border);
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.actions {
+  display: flex;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.info-box {
+  background: #fff;
+  border-radius: 10px;
+  padding: 12px;
+  border: 1px dashed var(--border);
+  min-height: 100px;
+  white-space: pre-wrap;
+}
+
+.hint {
+  background: rgba(37, 99, 235, 0.06);
+  border: 1px solid rgba(37, 99, 235, 0.1);
+  color: var(--muted);
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-size: 14px;
+}
+
+.status {
+  padding: 10px 12px;
+  border-radius: 10px;
+  font-weight: 700;
+  color: white;
+  min-width: 180px;
+  text-align: center;
+}
+
+.status--ok {
+  background: var(--success);
+}
+
+.status--warn {
+  background: var(--warning);
+  color: #4b3100;
+}
+
+.status--error {
+  background: var(--danger);
+}
+
+.status--neutral {
+  background: var(--muted);
+}
+
+.instructions {
+  margin: 0;
+  padding-left: 20px;
+  color: var(--text);
+}
+
+.footer {
+  padding: 16px 24px 32px;
+  text-align: center;
+  color: var(--muted);
+}
