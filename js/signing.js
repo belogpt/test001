@@ -1,21 +1,3 @@
-const PLUGIN_SCRIPT_PATH = './vendor/cadesplugin_api.js';
-
-function injectPluginScript() {
-  if (document.querySelector('[data-plugin-loader]')) {
-    return Promise.resolve();
-  }
-
-  return new Promise((resolve, reject) => {
-    const script = document.createElement('script');
-    script.src = PLUGIN_SCRIPT_PATH;
-    script.async = true;
-    script.dataset.pluginLoader = 'true';
-    script.onload = () => resolve();
-    script.onerror = () => reject(new Error('Не удалось загрузить cadesplugin_api.js из каталога vendor/.'));
-    document.head.appendChild(script);
-  });
-}
-
 function normalizeVersion(version) {
   if (!version) {
     return '';
@@ -52,58 +34,33 @@ export async function checkCades() {
     };
   }
 
-  try {
-    await injectPluginScript();
-  } catch (error) {
-    return {
-      ok: false,
-      message: error.message,
-      details: [
-        { label: 'Загрузка cadesplugin_api.js', value: 'Не удалось' },
-        { label: 'Ожидаемый путь', value: PLUGIN_SCRIPT_PATH },
-      ],
-      hints: ['Убедитесь, что оригинальный cadesplugin_api.js скопирован в каталог vendor/.'],
-    };
-  }
-
   if (!window.cadesplugin) {
     return {
       ok: false,
-      message: 'Объект cadesplugin не найден в окне браузера.',
+      message: 'cadesplugin_api.js не загружен или API не создан.',
       details: [
-        { label: 'Инъекция API', value: 'Не обнаружен window.cadesplugin' },
-        { label: 'Путь к скрипту', value: PLUGIN_SCRIPT_PATH },
+        { label: 'Инициализация API', value: 'Не обнаружен window.cadesplugin' },
       ],
       hints: [
         'Проверьте, что расширение CryptoPro установлено и включено.',
-        'Убедитесь, что cadesplugin_api.js загружается без ошибок в консоли.',
+        'Убедитесь, что cadesplugin_api.js лежит рядом с index.html и загружается без ошибок.',
       ],
     };
   }
 
   let plugin = window.cadesplugin;
+
   try {
     if (typeof plugin.then === 'function') {
       plugin = await plugin;
     }
-  } catch (error) {
-    return {
-      ok: false,
-      message: `Плагин загружен, но не готов: ${error.message}`,
-      details: [
-        { label: 'Инициализация API', value: 'Ошибка готовности' },
-        { label: 'Подробнее', value: error.message },
-      ],
-      hints: ['Откройте страницу из доверенного контекста (http://localhost) и проверьте права доступа расширения.'],
-    };
-  }
 
-  try {
     const about = await plugin.CreateObject('CAdESCOM.About');
     const version = normalizeVersion(await about.PluginVersion);
+
     return {
       ok: true,
-      message: 'CryptoPro API доступен и готов к работе',
+      message: 'CryptoPro API доступен',
       details: [
         { label: 'Протокол', value: window.location.protocol },
         { label: 'Версия плагина', value: version || 'н/д' },
@@ -112,16 +69,20 @@ export async function checkCades() {
       plugin,
     };
   } catch (error) {
+    const msg = window.cadesplugin && typeof window.cadesplugin.getLastError === 'function'
+      ? window.cadesplugin.getLastError(error)
+      : String(error);
+
     return {
       ok: false,
-      message: 'Расширение установлено, но API недоступен для текущего origin.',
+      message: `Ошибка инициализации CryptoPro: ${msg}`,
       details: [
-        { label: 'CreateObject', value: error.message },
+        { label: 'Инициализация API', value: msg },
         { label: 'Origin', value: window.location.origin },
       ],
       hints: [
         'Убедитесь, что страница открыта с http://localhost, а не по file://.',
-        'Проверьте настройки расширения CryptoPro и наличие прав доступа к этому сайту.',
+        'Проверьте, что cadesplugin_api.js загружен из того же каталога, что и index.html.',
       ],
     };
   }

@@ -12,6 +12,30 @@ const signatureOutput = document.getElementById('signature-output');
 const downloadButton = document.getElementById('download-signature');
 const statusDetails = document.getElementById('status-details');
 
+if (window.__disableApp) {
+  console.warn('Приложение не инициализируется в режиме file://.');
+}
+
+const requiredElements = [
+  statusEl,
+  certificateSelect,
+  certificateInfo,
+  refreshButton,
+  signButton,
+  resetButton,
+  fileInput,
+  detachedToggle,
+  signatureOutput,
+  downloadButton,
+  statusDetails,
+];
+
+const appReady = !window.__disableApp && requiredElements.every(Boolean);
+
+if (!appReady) {
+  console.warn('Страница не готова к инициализации приложения электронной подписи.');
+} else {
+
 let certificates = [];
 
 function setStatus(text, level = 'neutral') {
@@ -173,3 +197,4 @@ signButton.addEventListener('click', () => handleSign());
 downloadButton.addEventListener('click', downloadSignature);
 
 init();
+}
